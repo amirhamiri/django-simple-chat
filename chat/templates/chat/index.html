@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <title>چت عمومی</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; padding: 24px 14px;
+      background: #0b1220; color: #e5e7eb;
+      font-family: Tahoma, Arial, sans-serif;
+    }
+    .chat {
+      width: 100%; max-width: 680px; margin: 0 auto;
+      background: #111827; border: 1px solid #263244;
+      border-radius: 18px; padding: 20px;
+      box-shadow: 0 18px 60px #0005;
+    }
+    header { text-align: center; margin-bottom: 18px; }
+    h1 { margin: 0 0 8px; font-size: 25px; color: #60a5fa; }
+    .hint { margin: 0; color: #9ca3af; font-size: 13px; line-height: 1.8; }
+    .messages {
+      height: min(55vh, 480px); min-height: 260px; overflow-y: auto;
+      border: 1px solid #263244; background: #0b1220;
+      border-radius: 12px; padding: 12px; margin-bottom: 16px;
+    }
+    .message {
+      background: #172338; border: 1px solid #263852;
+      border-radius: 10px; padding: 11px 12px; margin-bottom: 10px;
+      overflow-wrap: anywhere; white-space: pre-wrap;
+    }
+    .message:last-child { margin-bottom: 0; }
+    .message-head { display: flex; gap: 12px; justify-content: space-between;
+      align-items: baseline; margin-bottom: 7px; }
+    .name { color: #93c5fd; font-weight: bold; }
+    time { color: #9ca3af; font-size: 11px; white-space: nowrap; }
+    .content { line-height: 1.8; }
+    .empty { text-align: center; color: #9ca3af; padding: 35px 8px; }
+    label { display: block; margin: 12px 0 7px; font-size: 13px; color: #cbd5e1; }
+    input {
+      width: 100%; border: 1px solid #374151; background: #0b1220;
+      color: #f9fafb; border-radius: 9px; padding: 12px;
+      font: inherit; outline: none;
+    }
+    input:focus { border-color: #60a5fa; }
+    button {
+      width: 100%; margin-top: 12px; border: 0; border-radius: 9px;
+      padding: 12px; color: #fff; background: #2563eb; cursor: pointer;
+      font: inherit; font-weight: bold;
+    }
+    button:hover { background: #1d4ed8; }
+    .refresh { background: #263244; }
+    .refresh:hover { background: #374151; }
+    footer { text-align: center; color: #6b7280; font-size: 11px; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <main class="chat">
+    <header>
+      <h1>💬 چت عمومی</h1>
+      <p class="hint">بدون ثبت‌نام پیام بگذارید و با دیگران گفتگو کنید.</p>
+    </header>
+
+    <section class="messages" id="messages" aria-live="polite">
+      {% for message in messages %}
+        <article class="message">
+          <div class="message-head">
+            <span class="name">{{ message.name }}</span>
+            <time>{{ message.created_at|date:"Y/m/d - H:i" }}</time>
+          </div>
+          <div class="content">{{ message.content }}</div>
+        </article>
+      {% empty %}
+        <p class="empty">هنوز پیامی نیست؛ اولین پیام را شما بفرستید!</p>
+      {% endfor %}
+    </section>
+
+    <form method="post">
+      {% csrf_token %}
+      <label for="name">نام (اختیاری)</label>
+      <input id="name" name="name" type="text" maxlength="30"
+             placeholder="مثلاً علی" autocomplete="nickname">
+      <label for="content">پیام شما</label>
+      <input id="content" name="content" type="text" maxlength="500"
+             placeholder="پیامت را بنویس..." required autocomplete="off">
+      <button type="submit">ارسال پیام</button>
+    </form>
+
+    <button class="refresh" type="button" onclick="location.reload()">
+      تازه‌سازی پیام‌ها
+    </button>
+    <footer>پیام‌ها عمومی هستند و همه بازدیدکنندگان می‌توانند آن‌ها را ببینند.</footer>
+  </main>
+  <script>
+    const messages = document.getElementById("messages");
+    messages.scrollTop = messages.scrollHeight;
+  </script>
+</body>
+</html>
